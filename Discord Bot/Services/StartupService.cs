@@ -14,20 +14,30 @@ namespace Discord_Bot
         private readonly CommandService _commands;
 
         // DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
-        public StartupService(
-            IServiceProvider provider,
-            DiscordSocketClient client,
-            CommandService commands)
+        public StartupService(IServiceProvider provider, DiscordSocketClient client, CommandService commands)
         {
             _provider = provider;
             _client = client;
             _commands = commands;
+
+            _client.Ready += ReadyAsync;
         }
 
         public async Task StartAsync()
         {
             await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("token"));
             await _client.StartAsync();
+
+            // Load commands and modules into the command service
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _provider);
+        }
+
+        // The Ready event indicates that the client has opened a connection and it is now safe to access the cache.
+        private Task ReadyAsync()
+        {
+            Console.WriteLine($"{_client.CurrentUser} is connected!");
+
+            return Task.CompletedTask;
         }
     }
 }

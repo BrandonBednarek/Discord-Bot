@@ -35,7 +35,9 @@ namespace Discord_Bot
             ConfigureServices(services);
 
             var provider = services.BuildServiceProvider();                     // Build the service provider
+            provider.GetRequiredService<LoggingService>();                      // Start the logging service
             provider.GetRequiredService<CommandHandler>();                      // Start the command handler service
+
             await provider.GetRequiredService<StartupService>().StartAsync();   // Start the startup service
 
             // Block this task until the program is closed.
@@ -54,24 +56,12 @@ namespace Discord_Bot
                 LogLevel = LogSeverity.Verbose,     // Tell the logger to give Verbose amount of info
                 DefaultRunMode = RunMode.Async,     // Force all commands to run async by default
             }))
-            .AddSingleton<CommandHandler>()         // Add the command handler to the collection
-            .AddSingleton<StartupService>();        // Add startupservice to the collection
+            .AddSingleton<CommandHandler>()         // Add CommandHandler to the collection
+            .AddSingleton<StartupService>()         // Add StartupService to the collection
+            .AddSingleton<LoggingService>();        // Add LoggingService to the collection
         }
 
         /*
-        private Task LogAsync(LogMessage log) // The Log event starts the logger to the console
-        {
-            Console.WriteLine(log.ToString());
-            return Task.CompletedTask;
-        }
-
-        private Task ReadyAsync() // The Ready event indicates that the client has opened a connection and it is now safe to access the cache.
-        {
-            Console.WriteLine($"{_client.CurrentUser} is connected!");
-
-            return Task.CompletedTask;
-        }
-
         // This event deletes a message when a reaction is added to it at a certain threshold
         private async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel originalChannel, SocketReaction reaction)
         {
@@ -93,28 +83,6 @@ namespace Discord_Bot
         {
             var channel = _client.GetChannel(695053048887771137) as SocketTextChannel;
             await channel.SendMessageAsync($"AYOWADDUP it's {user.Username}"); // Welcomes the new user
-        }
-
-        // This is not the recommended way to write a bot - consider reading over the Commands Framework sample.
-        private async Task MessageReceivedAsync(SocketMessage message)
-        {
-            // The bot should never respond to itself.
-            if (message.Author.Id == _client.CurrentUser.Id)
-                return;
-
-            var regex = new Regex(@"\b(\d{1,3})(?!%|a|p)\b");
-            if (regex.IsMatch(message.Content))
-            {
-                var matches = regex.Matches(message.Content);
-
-                foreach (Match m in matches)
-                {
-                    await message.Channel.SendMessageAsync(m.Value);
-                }
-            }
-
-            if (message.Content == "!ping")
-                await message.Channel.SendMessageAsync("pong!");
         }
         */
     }
