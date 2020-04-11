@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -9,13 +10,16 @@ namespace Discord_Bot
 {
     public class StartupService
     {
+        private readonly IConfiguration _config;
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
+        private readonly string _token;
 
         // DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
-        public StartupService(IServiceProvider provider, DiscordSocketClient client, CommandService commands)
+        public StartupService(IConfiguration config, IServiceProvider provider, DiscordSocketClient client, CommandService commands)
         {
+            _config = config;
             _provider = provider;
             _client = client;
             _commands = commands;
@@ -25,7 +29,7 @@ namespace Discord_Bot
 
         public async Task StartAsync()
         {
-            await _client.LoginAsync(TokenType.Bot, Environment.GetEnvironmentVariable("token"));
+            await _client.LoginAsync(TokenType.Bot, _config["Discord:Token"]);
             await _client.StartAsync();
 
             // Load commands and modules into the command service

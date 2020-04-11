@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
@@ -9,8 +10,15 @@ namespace Discord_Bot
 {
     class Startup
     {
+        public IConfiguration Configuration { get; }
+
         public Startup(string[] args)
         {
+            var builder = new ConfigurationBuilder()        // Create a new instance of the config builder
+                .SetBasePath(AppContext.BaseDirectory)      // Specify the default location for the config file
+                .AddUserSecrets<Startup>();                 // Add user secrets
+            Configuration = builder.Build();                // Build the configuration
+
             /*
             _config = new DiscordSocketConfig { MessageCacheSize = 1000 };      // enable message cache
             _client = new DiscordSocketClient(_config);                         // create client
@@ -40,8 +48,7 @@ namespace Discord_Bot
 
             await provider.GetRequiredService<StartupService>().StartAsync();   // Start the startup service
 
-            // Block this task until the program is closed.
-            await Task.Delay(-1);
+            await Task.Delay(-1); // Block this task until the program is closed.
         }
 
         private void ConfigureServices(ServiceCollection services)
@@ -58,7 +65,8 @@ namespace Discord_Bot
             }))
             .AddSingleton<CommandHandler>()         // Add CommandHandler to the collection
             .AddSingleton<StartupService>()         // Add StartupService to the collection
-            .AddSingleton<LoggingService>();        // Add LoggingService to the collection
+            .AddSingleton<LoggingService>()         // Add LoggingService to the collection
+            .AddSingleton(Configuration);           // Add configuration to the collection
         }
 
         /*
