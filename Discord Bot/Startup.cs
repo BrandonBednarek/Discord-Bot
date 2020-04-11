@@ -18,17 +18,6 @@ namespace Discord_Bot
                 .SetBasePath(AppContext.BaseDirectory)      // Specify the default location for the config file
                 .AddUserSecrets<Startup>();                 // Add user secrets
             Configuration = builder.Build();                // Build the configuration
-
-            /*
-            _config = new DiscordSocketConfig { MessageCacheSize = 1000 };      // enable message cache
-            _client = new DiscordSocketClient(_config);                         // create client
-
-            _client.Log += LogAsync; // start the logger
-            _client.Ready += ReadyAsync; // log in and start async
-            // _client.MessageReceived += Com.ReceivedAsync; // run when a message is received
-            _client.ReactionAdded += ReactionAddedAsync; // run when a reaction is added
-            _client.UserJoined += UserJoinedAsync; // run when a reaction is added
-            */
         }
 
         public static async Task MainAsync(string[] args)   // This event logs the client in and starts async
