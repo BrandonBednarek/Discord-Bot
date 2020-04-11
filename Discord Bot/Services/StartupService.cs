@@ -14,7 +14,6 @@ namespace Discord_Bot
         private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
-        private readonly string _token;
 
         // DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
         public StartupService(IConfiguration config, IServiceProvider provider, DiscordSocketClient client, CommandService commands)
