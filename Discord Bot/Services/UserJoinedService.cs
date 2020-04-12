@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 
 namespace Discord_Bot.Services
 {
-    class UserJoined
+    class UserJoinedService
     {
         private readonly DiscordSocketClient _client;
 
         // DiscordSocketClient is injected automatically from the IServiceProvider
-        public UserJoined(DiscordSocketClient client)
+        public UserJoinedService(DiscordSocketClient client)
         {
             _client = client;
 

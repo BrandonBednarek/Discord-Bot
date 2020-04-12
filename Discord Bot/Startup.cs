@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using Discord_Bot.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -33,6 +34,7 @@ namespace Discord_Bot
 
             var provider = services.BuildServiceProvider();                     // Build the service provider
             provider.GetRequiredService<LoggingService>();                      // Start the logging service
+            provider.GetRequiredService<UserJoinedService>();                   // Start the user joined service
             provider.GetRequiredService<CommandHandler>();                      // Start the command handler service
 
             await provider.GetRequiredService<StartupService>().StartAsync();   // Start the startup service
@@ -74,13 +76,6 @@ namespace Discord_Bot
                     await message.DeleteAsync();
                 }
             }
-        }
-
-        // This event welcomes the user when they join the server
-        private async Task UserJoinedAsync(SocketGuildUser user)
-        {
-            var channel = _client.GetChannel(695053048887771137) as SocketTextChannel;
-            await channel.SendMessageAsync($"AYOWADDUP it's {user.Username}"); // Welcomes the new user
         }
         */
     }
