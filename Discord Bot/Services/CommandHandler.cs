@@ -12,10 +12,7 @@ namespace Discord_Bot
         private readonly IServiceProvider _provider;
 
         // DiscordSocketClient, CommandService, IConfigurationRoot, and IServiceProvider are injected automatically from the IServiceProvider
-        public CommandHandler(
-            DiscordSocketClient client,
-            CommandService commands,
-            IServiceProvider provider)
+        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider provider)
         {
             _client = client;
             _commands = commands;
@@ -23,12 +20,18 @@ namespace Discord_Bot
 
             _client.MessageReceived += ReceivedAsync;
         }
+
         private async Task ReceivedAsync(SocketMessage message)
         {
             // The bot should never respond to itself.
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
 
+            // Bot replies to !ping with !pong
+            if (message.Content == "!ping")
+                await message.Channel.SendMessageAsync("pong!");
+
+            // Converts Celsius in messages to Fahrenheit
             /* convert celsius to f
             var regex = new Regex(@"\b(\d{1,3})(?!%|a|p)\b");
             if (regex.IsMatch(message.Content))
@@ -40,9 +43,6 @@ namespace Discord_Bot
                     await message.Channel.SendMessageAsync(m.Value);
                 }
             }*/
-
-            if (message.Content == "!ping")
-                await message.Channel.SendMessageAsync("pong!");
         }
     }
 }

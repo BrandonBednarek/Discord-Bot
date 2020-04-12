@@ -10,8 +10,8 @@ namespace Discord_Bot
     {
         private readonly DiscordSocketClient _client;
 
-        // DiscordSocketClient and CommandService are injected automatically from the IServiceProvider
-        public LoggingService(DiscordSocketClient client, CommandService commands)
+        // DiscordSocketClient is injected automatically from the IServiceProvider
+        public LoggingService(DiscordSocketClient client)
         {
             _client = client;
 
