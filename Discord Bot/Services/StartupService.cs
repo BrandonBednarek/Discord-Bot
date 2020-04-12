@@ -10,18 +10,18 @@ namespace Discord_Bot
 {
     public class StartupService
     {
-        private readonly IConfiguration _config;
-        private readonly IServiceProvider _provider;
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
+        private readonly IConfiguration _config;
+        private readonly IServiceProvider _provider;
 
-        // IConfiguration, DiscordSocketClient, and CommandService are injected automatically from the IServiceProvider
-        public StartupService(IConfiguration config, IServiceProvider provider, DiscordSocketClient client, CommandService commands)
+        // DiscordSocketClient, CommandService, IConfiguration, and IServiceProvider are injected automatically from the IServiceProvider
+        public StartupService(DiscordSocketClient client, CommandService commands, IConfiguration config, IServiceProvider provider)
         {
-            _config = config;
-            _provider = provider;
             _client = client;
             _commands = commands;
+            _config = config;
+            _provider = provider;
 
             _client.Ready += ReadyAsync;
         }

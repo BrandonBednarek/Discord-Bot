@@ -1,5 +1,4 @@
-﻿using Discord.Commands;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -9,15 +8,11 @@ namespace Discord_Bot
     internal class CommandHandler
     {
         private readonly DiscordSocketClient _client;
-        private readonly CommandService _commands;
-        private readonly IServiceProvider _provider;
 
-        // DiscordSocketClient, CommandService, IConfigurationRoot, and IServiceProvider are injected automatically from the IServiceProvider
-        public CommandHandler(DiscordSocketClient client, CommandService commands, IServiceProvider provider)
+        // DiscordSocketClient is injected automatically from the IServiceProvider
+        public CommandHandler(DiscordSocketClient client)
         {
             _client = client;
-            _commands = commands;
-            _provider = provider;
 
             _client.MessageReceived += ReceivedAsync;
         }
@@ -45,10 +40,7 @@ namespace Discord_Bot
                 int celsius = Int32.Parse(matches[0].Value);
                 int fah = (celsius * 9) / 5 + 32;
 
-                foreach (Match m in matches)
-                {
-                    await message.Channel.SendMessageAsync(fah + "F");
-                }
+                await message.Channel.SendMessageAsync(fah + "F");
             }
         }
     }
