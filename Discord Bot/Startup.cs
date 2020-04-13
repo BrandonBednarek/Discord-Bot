@@ -33,9 +33,10 @@ namespace Discord_Bot
             ConfigureServices(services);
 
             var provider = services.BuildServiceProvider();                     // Build the service provider
-            provider.GetRequiredService<LoggingService>();                      // Start the logging service
-            provider.GetRequiredService<UserJoinedService>();                   // Start the user joined service
             provider.GetRequiredService<CommandHandler>();                      // Start the command handler service
+            provider.GetRequiredService<LoggingService>();                      // Start the logging service
+            provider.GetRequiredService<ReactionService>();                     // Start the reaction service
+            provider.GetRequiredService<UserJoinedService>();                   // Start the user joined service
 
             await provider.GetRequiredService<StartupService>().StartAsync();   // Start the startup service
 
@@ -54,29 +55,12 @@ namespace Discord_Bot
                 LogLevel = LogSeverity.Verbose,     // Tell the logger to give Verbose amount of info
                 DefaultRunMode = RunMode.Async,     // Force all commands to run async by default
             }))
+            .AddSingleton<CommandHandler>()         // Add CommandHandler to the collection
             .AddSingleton<LoggingService>()         // Add LoggingService to the collection
+            .AddSingleton<ReactionService>()        // Add ReactionService to the collection
             .AddSingleton<StartupService>()         // Add StartupService to the collection
             .AddSingleton<UserJoinedService>()      // Add UserJoinedService to the collection
-            .AddSingleton<CommandHandler>()         // Add CommandHandler to the collection
             .AddSingleton(Configuration);           // Add configuration to the collection
         }
-
-        /*
-        // This event deletes a message when a reaction is added to it at a certain threshold
-        private async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel originalChannel, SocketReaction reaction)
-        {
-            var message = await cachedMessage.GetOrDownloadAsync();
-            if (message != null && reaction.User.IsSpecified)
-            {
-                Console.WriteLine($"{reaction.User.Value} just added a reaction '{reaction.Emote}' " + $"to {message.Author}'s message ({message.Id}).");
-                Console.WriteLine(reaction.Emote.Name);
-                if (reaction.Emote.Name.Equals("Patboo") && message.Reactions.Count >= 2)
-                {
-                    Console.WriteLine("Deleting message");
-                    await message.DeleteAsync();
-                }
-            }
-        }
-        */
     }
 }
