@@ -1,6 +1,5 @@
 ﻿using Discord;
 using Discord.WebSocket;
-using System;
 using System.Threading.Tasks;
 
 namespace Discord_Bot.Services
@@ -19,12 +18,12 @@ namespace Discord_Bot.Services
 
         private async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel originalChannel, SocketReaction reaction)
         {
+            // Delete Message if it has a score < 5
+            int score = 5;
             var message = await cachedMessage.GetOrDownloadAsync();
             if (message != null && reaction.User.IsSpecified)
             {
-                Console.WriteLine($"{reaction.User.Value} just added a reaction '{reaction.Emote}' " + $"to {message.Author}'s message ({message.Id}).");
-                Console.WriteLine(reaction.Emote.Name);
-                if (reaction.Emote.Name.Equals("Patboo") && message.Reactions.Count >= 1)
+                if (reaction.Emote.Name.Equals("Patboo"))
                 {
                     int booCount = 0;
 
@@ -32,9 +31,11 @@ namespace Discord_Bot.Services
                     {
                         if (item.Name == "Patboo")
                             booCount++;
+                        else
+                            booCount--;
                     }
 
-                    if (booCount >= 1)
+                    if (booCount >= score)
                     {
                         await message.DeleteAsync();
                     }
