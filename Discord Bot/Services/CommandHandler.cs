@@ -24,6 +24,13 @@ namespace Discord_Bot
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
 
+            // checks if message is a link
+            var link = new Regex(@"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)");
+            if (link.IsMatch(message.Content))
+            {
+                return;
+            }
+
             // Converts Celsius in messages to Fahrenheit
             var regex = new Regex(@"-?\d+(?:\.\d+)?(?:\s*°)?[cCfF]");
             if (regex.IsMatch(message.Content))
@@ -66,7 +73,9 @@ namespace Discord_Bot
 
             // Bot replies to !ping with !pong
             if (message.Content == "!ping")
-                await message.Channel.SendMessageAsync("pong!");
+            {
+                await message.Channel.SendMessageAsync("pong!"); return;
+            }
 
             if (message.Content.Contains("!clear") && message.Author.Id == 147163300818321408)
             {
@@ -84,7 +93,9 @@ namespace Discord_Bot
             }
 
             if (message.Content == "!watch")
-                await message.Channel.SendMessageAsync("https://www.watch2gether.com/rooms/mg61hq840mnib7vfib");
+            {
+                await message.Channel.SendMessageAsync("https://www.watch2gether.com/rooms/mg61hq840mnib7vfib"); return;
+            }
         }
     }
 }
