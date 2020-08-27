@@ -18,26 +18,21 @@ namespace Discord_Bot.Services
 
         private async Task ReactionAddedAsync(Cacheable<IUserMessage, ulong> cachedMessage, ISocketMessageChannel originalChannel, SocketReaction reaction)
         {
-            // Delete Message if it has a score < 5
+            // Delete Message if it has a score > 5
             int score = 5;
             var message = await cachedMessage.GetOrDownloadAsync();
             if (message != null && reaction.User.IsSpecified)
             {
                 if (reaction.Emote.Name.Equals("Patboo"))
                 {
-                    int booCount = 0;
-
-                    foreach (var item in message.Reactions.Keys)
+                    foreach (var item in message.Reactions)
                     {
-                        if (item.Name == "Patboo")
-                            booCount++;
-                        else
-                            booCount--;
-                    }
-
-                    if (booCount >= score)
-                    {
-                        await message.DeleteAsync();
+                        if (item.Key.Name == "Patboo")
+                            if (item.Value.ReactionCount >= score)
+                            {
+                                await message.Channel.SendMessageAsync(message.Author.Username + " posted a bad meme and he/she should feel bad.");
+                                await message.DeleteAsync();
+                            }
                     }
                 }
             }

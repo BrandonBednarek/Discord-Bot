@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
 using System;
 using System.Text.RegularExpressions;
@@ -24,12 +25,12 @@ namespace Discord_Bot
             if (message.Author.Id == _client.CurrentUser.Id)
                 return;
 
-            // checks if message is a link
+            // regex if message is a link
             var link = new Regex(@"https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)");
-
-            // Converts Celsius in messages to Fahrenheit
+            // regex temp format
             var temp = new Regex(@"-?\d+(?:\.\d+)?(?:\s*°)?[cCfF]");
 
+            // Converts Celsius in messages to Fahrenheit
             if (!link.IsMatch(message.Content))
             {
                 if (temp.IsMatch(message.Content))
@@ -56,23 +57,17 @@ namespace Discord_Bot
                 }
             }
 
-            // Only allow images or hyperlinks in the "Memes" channel
-            /*var channel = _client.GetChannel(694062245566611517) as SocketTextChannel;
-            string deleteMessage = "This channel is designated for images or links only. Use the other channels for conversations.";
-            if (message.Channel == channel)
-            {
-                if (message.Attachments.Count < 1)
-                    await message.Channel.SendMessageAsync(deleteMessage);
-                    await message.DeleteAsync();
-            }*/
-
             // Only commands that start with ! as a prefix
             if (message.Content[0] != '!')
                 return;
 
-            // The bot should only read messages from #bot-commands, else delete
+            // The bot should only read messages from #bot-commands or #bot-testing, else delete
             if (message.Channel.Id != 747591343546695710 && message.Channel.Id != 694062245566611517)
             {
+                const int delay = 5000;
+                var m = await message.Channel.SendMessageAsync($"Use commands in #bot-commands. _This message will be deleted in {delay / 1000} seconds._");
+                await Task.Delay(delay);
+                await m.DeleteAsync();
                 await (message.Channel as SocketTextChannel).DeleteMessageAsync(message);
                 return;
             }
@@ -84,26 +79,29 @@ namespace Discord_Bot
             //    await message.Channel.SendMessageAsync("pong!"); return;
             //}
 
-            //// Bot replies to !ping with !pong
-            //if (message.Content == "!pingp")
-            //{
-            //    await message.Channel.SendMessageAsync("pong!"); return;
-            //}
+            if (message.Content.Contains("!bulkclear") && message.Author.Id == 147163300818321408)
+            {
+                try
+                {
+                    // see if number in clear
+                    int toDelete = Int32.Parse(Regex.Match(message.Content, @"\d+").Value);
 
-            //if (message.Content.Contains("!clear") && message.Author.Id == 147163300818321408)
-            //{
-            //    try
-            //    {
-            //        int toDelete = Int32.Parse(message.Content.Remove(0, 6).Trim());
-            //        var messages = await message.Channel.GetMessagesAsync(toDelete + 1).FlattenAsync(); //defualt is 100
-            //        await (message.Channel as SocketTextChannel).DeleteMessagesAsync(messages);
-            //        return;
-            //    }
-            //    catch
-            //    {
-            //        return;
-            //    }
-            //}
+                    var messages = await message.Channel.GetMessagesAsync(toDelete + 1).FlattenAsync();
+
+                    await (message.Channel as SocketTextChannel).DeleteMessagesAsync(messages);
+
+                    const int delay = 5000;
+                    var m = await message.Channel.SendMessageAsync($"Purge completed. _This message will be deleted in {delay / 1000} seconds._");
+                    await Task.Delay(delay);
+                    await m.DeleteAsync();
+
+                    return;
+                }
+                catch
+                {
+                    return;
+                }
+            }
 
             if (message.Content == "!watch")
             {
